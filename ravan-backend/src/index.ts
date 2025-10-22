@@ -1,0 +1,31 @@
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { config } from './config';
+import { chatRouter } from './routes/chat.route';
+
+const port = config.port;
+const app = new Hono();
+
+// CORS middleware
+app.use('*', cors({
+  origin: config.cors.allowedOrigins,
+  allowHeaders: ['Content-Type'],
+  allowMethods: ['POST', 'GET'],
+}));
+
+// Routes
+app.route('/api', chatRouter);
+
+// Health check
+app.get('/health', (c) => c.json({ status: 'ok' }));
+
+// Default greeting
+app.get('/', (c) =>
+  c.json({
+    message: 'Welcome to Ravan - AI Crypto Commander Backend',
+    version: '1.0.0',
+  })
+);
+
+// Export for tsx/server
+export { app, port };

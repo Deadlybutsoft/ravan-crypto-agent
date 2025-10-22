@@ -1,0 +1,31 @@
+{
+  "name": "ravan-backend",
+  "version": "1.0.0",
+  "description": "AI agent for sending cryptocurrency via natural language commands",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc"
+  },
+  "keywords": [
+    "ai",
+    "crypto",
+    "algorand",
+    "adk-ts"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@iqai/adk": "^0.1.0",
+    "algosdk": "^2.7.0",
+    "hono": "^4.2.3",
+    "zod": "^3.22.4",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.25",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.2"
+  }
+}
