@@ -1,5 +1,6 @@
 [build]
 builder = "NIXPACKS"
+buildCommand = "cd ravan-backend && npm run build"
 
 [deploy]
 startCommand = "cd ravan-backend && npm start"
