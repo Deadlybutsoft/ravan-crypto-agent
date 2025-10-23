@@ -11,7 +11,7 @@ export const getRavanResponse = async (prompt: string, wallet: Wallet | null): P
 
     try {
         // Call backend API instead of Gemini directly
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/chat`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://ravan-crypto-agent-backend.onrender.com'}/api/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
