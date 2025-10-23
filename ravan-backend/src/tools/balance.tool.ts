@@ -1,16 +1,14 @@
-import { z } from 'zod';
+import { createTool } from '@iqai/adk';
+import * as z from 'zod';
 import { algorandService } from '../services/algorand.service';
 
-const balanceParameters = z.object({
-  address: z.string().describe('The Algorand address to check the balance of.'),
-});
-
-export const balanceTool = {
+export const balanceTool = createTool({
   name: 'get_balance',
   description: 'Get the ALGO balance for a given Algorand address.',
-  parameters: balanceParameters,
-  execute: async (input: z.infer<typeof balanceParameters>) => {
-    const { address } = input;
+  schema: z.object({
+    address: z.string().describe('The Algorand address to check the balance of.'),
+  }),
+  fn: async ({ address }) => {
     if (!algorandService.isValidAddress(address)) {
       return { error: 'Invalid address format.' };
     }
@@ -25,4 +23,4 @@ export const balanceTool = {
       return { error: 'Failed to retrieve balance.' };
     }
   },
-};
+});

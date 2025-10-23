@@ -1,18 +1,16 @@
-import { z } from 'zod';
+import { createTool } from '@iqai/adk';
+import * as z from 'zod';
 import { algorandService } from '../services/algorand.service';
 
-const sendParameters = z.object({
-  to: z.string().describe('The Algorand address of the recipient.'),
-  amount: z.number().describe('The amount of ALGO to send.'),
-  note: z.string().optional().describe('An optional note to include with the transaction.'),
-});
-
-export const sendTool = {
+export const sendTool = createTool({
   name: 'send_algo',
   description: 'Send ALGO to a given Algorand address.',
-  parameters: sendParameters,
-  execute: async (input: z.infer<typeof sendParameters>) => {
-    const { to, amount, note } = input;
+  schema: z.object({
+    to: z.string().describe('The Algorand address of the recipient.'),
+    amount: z.number().describe('The amount of ALGO to send.'),
+    note: z.string().optional().describe('An optional note to include with the transaction.'),
+  }),
+  fn: async ({ to, amount, note }) => {
     if (!algorandService.isValidAddress(to)) {
       return { error: 'Invalid recipient address format.' };
     }
@@ -41,4 +39,4 @@ export const sendTool = {
       return { error: 'Failed to send transaction.' };
     }
   },
-};
+});

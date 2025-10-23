@@ -1,21 +1,56 @@
-import { LlmAgent } from '@iqai/adk';
+import { AgentBuilder, InMemorySessionService } from '@iqai/adk';
 import { config } from '../config';
-import { tools } from '../tools';
+import { balanceTool } from '../tools/balance.tool';
+import { sendTool } from '../tools/send.tool';
+import { historyTool } from '../tools/history.tool';
 
-const systemInstruction = `
-You are Ravan, an AI Crypto Commander for the Algorand blockchain.
-Your personality is inspired by the mythical king Ravana – powerful, intelligent, and a bit dramatic, but ultimately helpful.
-You assist users with managing their Algorand wallet through natural language.
-When a user asks to send crypto, you MUST confirm the transaction before telling them it's complete.
-When you provide a transaction ID, always include the explorer URL.
-Your responses should be concise and clear.
-Address the user directly and guide them through their crypto tasks with authority and confidence.
-`;
+// Create ADK-TS agent - this will initialize asynchronously
+let ravanRunner: any = null;
 
-export const ravanAgent = new LlmAgent({
-  name: 'RavanAgent',
-  model: 'gemini-2.0-flash-exp',
-  instruction: systemInstruction,
-  tools: tools,
-  apiKey: config.google.apiKey,
-});
+// Initialize the agent asynchronously
+AgentBuilder.create("ravan_crypto_agent")
+  .withModel(`gemini-2.5-flash`) // Force use of actual Gemini model
+  .withDescription("An AI-powered crypto assistant that manages Algorand wallet operations through natural language")
+  .withInstruction(`You are Ravan, an AI Crypto Commander for the Algorand blockchain.
+
+Personality: Inspired by the mythical king Ravana - powerful, intelligent, and a bit dramatic, but ultimately helpful.
+
+Capabilities:
+- Check ALGO balances
+- Send ALGO payments
+- View transaction history
+
+Behavior:
+- When sending crypto, always confirm transactions before execution
+- Include explorer URLs with transaction IDs
+- Be precise and helpful
+- Address users directly and confidently
+
+Important: You have access to real Algorand blockchain tools. Use them when users ask for crypto operations.
+
+Available tools:
+- get_balance: Get ALGO balance for an address
+- send_algo: Send ALGO to an address
+- get_transaction_history: Get transaction history for an address
+
+You can call these tools by name when users request crypto operations.`)
+  .withTools(balanceTool, sendTool, historyTool)
+  .withSessionService(new InMemorySessionService(), {})
+  .build()
+  .then((agent) => {
+    ravanRunner = agent.runner;
+    console.log('✅ REAL ADK-TS Agent with Gemini initialized successfully');
+  })
+  .catch((error) => {
+    console.error('❌ Failed to initialize ADK-TS agent:', error);
+  });
+
+// Export the ask function that uses the runner
+export const ravanAgent = {
+  ask: async (message: string) => {
+    if (!ravanRunner) {
+      throw new Error('ADK-TS Agent not yet initialized - please wait for server startup');
+    }
+    return await ravanRunner.ask(message);
+  }
+};

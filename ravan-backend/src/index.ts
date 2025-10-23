@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { serve } from '@hono/node-server';
 import { config } from './config';
 import { chatRouter } from './routes/chat.route';
 
@@ -27,5 +28,16 @@ app.get('/', (c) =>
   })
 );
 
-// Export for tsx/server
-export { app, port };
+// Start the server
+console.log(`🚀 Ravan Backend Server starting on port ${port}`);
+console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+
+serve({
+  fetch: app.fetch,
+  port: port as number,
+});
+
+console.log(`✅ Server started at http://localhost:${port}`);
+
+// For testing purposes
+export { app };

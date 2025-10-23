@@ -28,22 +28,11 @@ router.post('/chat', async (c) => {
       });
     }
 
-    // TODO: Integrate with AI agent when API is fixed
-    // For now, return mock responses
-    let response = '';
-
-    if (message.toLowerCase().includes('balance')) {
-      response = 'Your current balance is 5.5 ALGO. This is a demo response - AI integration WIP.';
-    } else if (message.toLowerCase().includes('send')) {
-      response = 'Transaction sent successfully. TX ID: ABC123XYZ. Explorer: https://testnet.algoexplorer.io/tx/ABC123XYZ';
-    } else if (message.toLowerCase().includes('history') || message.toLowerCase().includes('transaction')) {
-      response = 'Your last 5 transactions: 1. Sent 2 ALGO to user.algo, 2. Received 1 ALGO from shop.algo, etc.';
-    } else {
-      response = `I understand your request: "${message}". Ravan AI is still being configured - please check back soon!`;
-    }
+    // Process the message through the ADK-TS AI agent
+    const result = await ravanAgent.ask(message);
 
     return c.json({
-      response,
+      response: result,
     });
   } catch (error) {
     console.error('Chat route error:', error);

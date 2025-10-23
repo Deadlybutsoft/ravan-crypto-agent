@@ -13,12 +13,16 @@ class AlgorandService {
     this.algodClient = new algosdk.Algodv2('', config.algorand.apiUrl, '');
     this.indexerClient = new algosdk.Indexer('', config.algorand.indexerUrl, '');
 
-    if (config.demoWallet.mnemonic) {
+    if (config.demoWallet.mnemonic && config.demoWallet.mnemonic !== 'YOUR_25_WORD_MNEMONIC_HERE') {
       try {
         this.demoAccount = algosdk.mnemonicToSecretKey(config.demoWallet.mnemonic);
+        console.log('✅ Demo wallet initialized successfully');
       } catch (error) {
         console.error('Failed to initialize demo wallet from mnemonic:', error);
+        console.log('⚠️  Running in demo mode without wallet capabilities');
       }
+    } else {
+      console.log('⚠️  No demo wallet configured - running in read-only mode');
     }
   }
 

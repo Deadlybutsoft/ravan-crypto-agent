@@ -1,17 +1,15 @@
-import { z } from 'zod';
+import { createTool } from '@iqai/adk';
+import * as z from 'zod';
 import { algorandService } from '../services/algorand.service';
 
-const historyParameters = z.object({
-  address: z.string().describe('The Algorand address to check the history of.'),
-  limit: z.number().optional().describe('The maximum number of transactions to return.'),
-});
-
-export const historyTool = {
+export const historyTool = createTool({
   name: 'get_transaction_history',
   description: 'Get the transaction history for a given Algorand address.',
-  parameters: historyParameters,
-  execute: async (input: z.infer<typeof historyParameters>) => {
-    const { address, limit } = input;
+  schema: z.object({
+    address: z.string().describe('The Algorand address to check the history of.'),
+    limit: z.number().optional().describe('The maximum number of transactions to return.'),
+  }),
+  fn: async ({ address, limit }) => {
     if (!algorandService.isValidAddress(address)) {
       return { error: 'Invalid address format.' };
     }
@@ -23,4 +21,4 @@ export const historyTool = {
       return { error: 'Failed to retrieve transaction history.' };
     }
   },
-};
+});
