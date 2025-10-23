@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "serve": "tsx src/index.ts",
+    "serve-alt": "PORT=3001 tsx src/index.ts"
   },
   "keywords": [
     "ai",
@@ -16,12 +18,18 @@
   ],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@hono/node-server": "^1.19.5",
     "@iqai/adk": "^0.1.0",
     "algosdk": "^2.7.0",
+    "dotenv": "^16.4.5",
     "hono": "^4.2.3",
-    "zod": "^3.22.4",
-    "dotenv": "^16.4.5"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.11.25",
