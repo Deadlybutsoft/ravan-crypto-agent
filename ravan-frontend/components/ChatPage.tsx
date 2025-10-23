@@ -108,13 +108,7 @@ const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
     );
 };
 
-const mockTransactions = [
-  { type: 'send', amount: 5, recipient: 'bob.algo', status: 'Completed', date: '2 min ago' },
-  { type: 'receive', amount: 12.5, recipient: 'charlie.algo', status: 'Completed', date: '1 hour ago' },
-  { type: 'send', amount: 1, recipient: 'dave.algo', status: 'Failed', date: '3 hours ago' },
-  { type: 'send', amount: 20, recipient: 'eve.algo', status: 'Completed', date: '1 day ago' },
-  { type: 'receive', amount: 50, recipient: 'frank.algo', status: 'Completed', date: '2 days ago' },
-];
+const mockTransactions = [];
 
 interface ChatPageProps {
     wallet: Wallet | null;
