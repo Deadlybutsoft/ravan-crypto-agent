@@ -60,10 +60,27 @@
       }
     </style>
 
-<link rel="stylesheet" href="/index.css">
+
 </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+    <script>
+      // Fallback if React fails to load
+      setTimeout(() => {
+        const root = document.getElementById('root');
+        if (root && !root.innerHTML.trim()) {
+          root.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #212121; color: white; font-family: monospace;">
+              <h1 style="font-size: 4rem; margin-bottom: 2rem;">
+                <span style="color: #8B5CF6;">Ravan</span> AI Crypto Agent
+              </h1>
+              <p style="font-size: 1.5rem; margin-bottom: 2rem;">Loading...</p>
+              <p style="font-size: 1rem; opacity: 0.7;">If this persists, check console for errors</p>
+            </div>
+          `;
+        }
+      }, 3000);
+    </script>
   </body>
 </html>
