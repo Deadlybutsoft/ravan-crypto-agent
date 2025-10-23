@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "build": "cd ravan-backend && tsc",
+    "build": "tsc --project tsconfig.json",
     "serve": "tsx src/index.ts",
     "serve-alt": "PORT=3001 tsx src/index.ts"
   },
