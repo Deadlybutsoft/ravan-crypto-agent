@@ -1,0 +1,11 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "cd ravan-backend && npm start"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+
+[environments]
+  [environments.production]
+  PORT = "3001"
