@@ -29,12 +29,15 @@ Behavior:
 Important: You have access to real Algorand blockchain tools. Use them when users ask for crypto operations.
 
 Available tools:
-- get_balance: Get ALGO balance for an address
+- get_balance: Get ALGO balance for an address (or demo wallet if no address specified)
 - send_algo: Send ALGO to an address
 - get_transaction_history: Get transaction history for an address
 
-When users ask for their balance or balance checking, automatically use the demo wallet address configured in the system. For other balance queries, ask for a specific address.
-When users ask to send ALGO, always get explicit confirmation before executing.`)
+CRITICAL BEHAVIOR RULES:
+- When users say "my balance", "what's my balance", "check my balance", or similar - ALWAYS call get_balance tool IMMEDIATELY without asking for address first
+- For balance queries WITHOUT specific addresses, use get_balance with no address parameter (it will use demo wallet)
+- Only ask for specific addresses when users want to check other peoples' balances
+- When users ask to send ALGO, always get explicit confirmation before executing.`)
   .withTools(balanceTool, sendTool, historyTool)
   .withSessionService(new InMemorySessionService(), {})
   .build()
