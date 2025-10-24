@@ -5,7 +5,9 @@ import { getRavanResponse } from '../services/geminiService';
 import { SendIcon, CloseIcon, PlusIcon, UserIcon, RavanIcon, MicrophoneIcon, NewChatIcon, PanelRightOpenIcon, ArrowUpRightIcon, ArrowDownLeftIcon, SettingsCubeIcon } from './icons';
 
 // Merged Account and Settings Modal Component
-const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => void }> = ({ wallet, onClose }) => {
+const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => void, onMnemonicSet: (mnemonic: string) => void }> = ({ wallet, onClose, onMnemonicSet }) => {
+    const [mnemonic, setMnemonic] = useState('');
+
     useEffect(() => {
         const handleEsc = (event: KeyboardEvent) => {
            if (event.key === 'Escape') {
@@ -52,7 +54,29 @@ const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => 
                     {/* Settings */}
                     <h2 className="text-2xl font-bold font-saira mb-6 text-black">Settings</h2>
                     <div className="space-y-4">
-                        <p className="text-gray-600">Settings page is under construction.</p>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Import Wallet (Mnemonic)</label>
+                            <textarea
+                                value={mnemonic}
+                                onChange={(e) => setMnemonic(e.target.value)}
+                                placeholder="Enter your 25-word mnemonic phrase..."
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
+                                rows={4}
+                            />
+                            <button
+                                onClick={() => {
+                                    if (mnemonic.trim()) {
+                                        onMnemonicSet(mnemonic.trim());
+                                        setMnemonic('');
+                                        alert('Wallet mnemonic set! You can now send transactions.');
+                                    }
+                                }}
+                                className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                            >
+                                Set Wallet
+                            </button>
+                        </div>
+                        <p className="text-xs text-red-500">⚠️ WARNING: This sends your mnemonic to the server. Only use for testing!</p>
                     </div>
                 </div>
                 <button className="w-full text-center p-4 font-saira font-bold text-lg text-red-500 hover:bg-red-500/10 transition-all duration-200 border-t border-gray-200 rounded-b-lg">
@@ -121,6 +145,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ wallet: initialWallet }) => {
     const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
     const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
     const [attachedFile, setAttachedFile] = useState<File | null>(null);
+    const [userMnemonic, setUserMnemonic] = useState<string | null>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -175,7 +200,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ wallet: initialWallet }) => {
             fileInputRef.current.value = '';
         }
 
-        const response = await getRavanResponse(messageText, wallet);
+        const response = await getRavanResponse(messageText, wallet, userMnemonic);
         
         const newAgentMessage: ChatMessage = { id: Date.now() + 2, sender: 'agent', text: response.message };
         
@@ -196,7 +221,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ wallet: initialWallet }) => {
 
     return (
         <>
-            {isAccountModalOpen && <AccountAndSettingsModal wallet={wallet} onClose={() => setIsAccountModalOpen(false)} />}
+            {isAccountModalOpen && <AccountAndSettingsModal wallet={wallet} onClose={() => setIsAccountModalOpen(false)} onMnemonicSet={setUserMnemonic} />}
             <div className="flex h-screen w-screen bg-white text-black font-mono">
                 
                 <main className="flex-grow flex flex-col h-screen relative">

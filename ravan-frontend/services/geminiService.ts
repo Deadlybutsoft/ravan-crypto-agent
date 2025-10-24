@@ -6,7 +6,7 @@ interface RavanResponse {
     newBalance?: number;
 }
 
-export const getRavanResponse = async (prompt: string, wallet: Wallet | null): Promise<RavanResponse> => {
+export const getRavanResponse = async (prompt: string, wallet: Wallet | null, mnemonic?: string | null): Promise<RavanResponse> => {
     if (!wallet) return { message: 'Error: Wallet not connected.' };
 
     try {
@@ -18,7 +18,8 @@ export const getRavanResponse = async (prompt: string, wallet: Wallet | null): P
             },
             body: JSON.stringify({
                 message: prompt,
-                walletAddress: wallet.address
+                walletAddress: wallet.address,
+                mnemonic: mnemonic || undefined
             }),
         });
 
