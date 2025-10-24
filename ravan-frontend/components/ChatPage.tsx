@@ -252,7 +252,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ wallet: initialWallet }) => {
     useEffect(() => {
         if (wallet && messages.length === 0) {
             setMessages([
-              { id: 1, sender: 'agent', text: "Ravan is ready. How can I help you?\n\nYou can try things like:\n- 'What's my balance?'\n- 'Send 5 ALGO to bob.algo'"}
+              { id: 1, sender: 'agent', text: "Ravan is ready. How can I help you?\n\nTry these example commands:\n• Check balances: \"get the total balance of this address GQCGVTCORNYT7TH5AES7FEV7O2YUGC6LYWD4L6LDCXXMGJJHXCUQYAGUVE\"\n• View history: \"last 10 transaction history of this address HZ57J3K46JIJXILONBBZOHX6BKPXEM2VVXNRFSUED6DKFD5ZD24PMJ3MVA\"\n• Send ALGO: \"send 22 ALGO to your-friend-address\""}
             ]);
         }
     }, [wallet, messages.length]);
