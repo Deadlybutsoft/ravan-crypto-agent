@@ -1,8 +1,8 @@
 import React from 'react';
-import { PeraWalletIcon, MetaMaskIcon, DemoWalletIcon } from './icons';
+import { PeraWalletIcon, DemoWalletIcon } from './icons';
 
 interface WalletConnectModalProps {
-  onConnect: (walletType: 'pera' | 'metamask' | 'demo') => void;
+  onConnect: (walletType: 'pera' | 'demo') => void;
 }
 
 const WalletConnectModal: React.FC<WalletConnectModalProps> = ({ onConnect }) => {
@@ -15,12 +15,6 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({ onConnect }) =>
             icon={<PeraWalletIcon />}
             name="Pera Wallet"
             onClick={() => onConnect('pera')}
-            buttonText="Connect"
-          />
-          <WalletOption
-            icon={<MetaMaskIcon />}
-            name="MetaMask"
-            onClick={() => onConnect('metamask')}
             buttonText="Connect"
           />
           <WalletOption
