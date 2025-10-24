@@ -5,7 +5,7 @@ import { getRavanResponse } from '../services/geminiService';
 import { SendIcon, CloseIcon, PlusIcon, UserIcon, RavanIcon, MicrophoneIcon, NewChatIcon, PanelRightOpenIcon, ArrowUpRightIcon, ArrowDownLeftIcon, SettingsCubeIcon } from './icons';
 
 // Merged Account and Settings Modal Component
-const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => void, onMnemonicSet: (mnemonic: string) => void }> = ({ wallet, onClose, onMnemonicSet }) => {
+const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => void, onMnemonicSet: (mnemonic: string) => void, userMnemonic: string | null }> = ({ wallet, onClose, onMnemonicSet, userMnemonic }) => {
     const [mnemonic, setMnemonic] = useState('');
 
     useEffect(() => {
@@ -39,12 +39,26 @@ const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => 
                             <p className="text-4xl font-bold text-black font-mono">{wallet?.balance.toFixed(2)} ALGO</p>
                         </div>
                         <div>
-                             <p className="text-sm text-gray-500 font-saira mb-2">Connected Wallet</p>
+                             <p className="text-sm text-gray-500 font-saira mb-2">Active Wallet</p>
                             <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                                <p className="text-xs text-gray-500 font-saira">Demo Wallet (Active)</p>
-                                <p className="text-sm text-black font-mono break-words" title={wallet?.address}>
-                                    {wallet?.address}
-                                </p>
+                                {userMnemonic ? (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <div>
+                                            <p className="text-xs text-green-600 font-saira">User Wallet (Active)</p>
+                                            <p className="text-sm text-black font-mono break-words" title={wallet?.address}>
+                                                {wallet?.address}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <p className="text-xs text-gray-500 font-saira">Demo Wallet (Active)</p>
+                                        <p className="text-sm text-black font-mono break-words" title={wallet?.address}>
+                                            {wallet?.address}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -52,31 +66,121 @@ const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => 
                     <hr className="my-8 border-gray-200" />
 
                     {/* Settings */}
-                    <h2 className="text-2xl font-bold font-saira mb-6 text-black">Settings</h2>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Import Wallet (Mnemonic)</label>
-                            <textarea
-                                value={mnemonic}
-                                onChange={(e) => setMnemonic(e.target.value)}
-                                placeholder="Enter your 25-word mnemonic phrase..."
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
-                                rows={4}
-                            />
-                            <button
-                                onClick={() => {
-                                    if (mnemonic.trim()) {
-                                        onMnemonicSet(mnemonic.trim());
-                                        setMnemonic('');
-                                        alert('Wallet mnemonic set! You can now send transactions.');
-                                    }
-                                }}
-                                className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                            >
-                                Set Wallet
-                            </button>
+                    <h2 className="text-2xl font-bold font-saira mb-6 text-black">Wallet Settings</h2>
+                    <div className="space-y-6">
+                        {/* Current Wallet Status */}
+                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-sm font-semibold text-blue-900">Current Transaction Wallet</h3>
+                                    <p className="text-sm text-blue-700">
+                                        {userMnemonic ? 'Using imported mnemonic' : 'Using demo wallet'}
+                                    </p>
+                                </div>
+                                {userMnemonic && (
+                                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                        User Wallet
+                                    </span>
+                                )}
+                            </div>
                         </div>
-                        <p className="text-xs text-red-500">⚠️ WARNING: This sends your mnemonic to the server. Only use for testing!</p>
+
+                        {/* Import Wallet Section */}
+                        <div className="space-y-4">
+                            <div>
+                                <h3 className="text-lg font-semibold text-black mb-2">Import User Wallet</h3>
+                                <p className="text-sm text-gray-600 mb-4">
+                                    Import your 25-word recovery phrase to send transactions from your real wallet.
+                                    Your demo wallet provides 100 ALGO for testing.
+                                </p>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Mnemonic Phrase
+                                    <span className="text-xs text-gray-500 ml-2">
+                                        ({mnemonic.split(' ').filter(word => word.trim()).length}/25 words)
+                                    </span>
+                                </label>
+                                <textarea
+                                    value={mnemonic}
+                                    onChange={(e) => {
+                                        const words = e.target.value.split(' ').filter(word => word.trim());
+                                        if (words.length <= 25) {
+                                            setMnemonic(e.target.value);
+                                        }
+                                    }}
+                                    placeholder="Enter your 25-word recovery phrase, separated by spaces..."
+                                    className={`w-full p-3 border rounded-lg resize-none ${
+                                        mnemonic.split(' ').filter(word => word.trim()).length === 25
+                                            ? 'border-green-300 bg-green-50 focus:border-green-500'
+                                            : 'border-gray-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent'
+                                    }`}
+                                    rows={4}
+                                />
+                                {mnemonic.split(' ').filter(word => word.trim()).length === 25 ? (
+                                    <div className="flex items-center gap-2 text-sm text-green-600">
+                                        <span>✓</span>
+                                        <span>All 25 words entered. Ready to import!</span>
+                                    </div>
+                                ) : mnemonic.split(' ').filter(word => word.trim()).length > 0 ? (
+                                    <div className="text-sm text-amber-600">
+                                        Enter {25 - mnemonic.split(' ').filter(word => word.trim()).length} more word(s)
+                                    </div>
+                                ) : null}
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => {
+                                        const words = mnemonic.split(' ').filter(word => word.trim());
+                                        if (words.length !== 25) {
+                                            alert('Please enter exactly 25 words for a valid mnemonic phrase.');
+                                            return;
+                                        }
+                                        if (confirm('⚠️ SECURITY WARNING ⚠️\n\nThis will import your wallet mnemonic to send real transactions. Your mnemonic will be transmitted to the server. Only proceed if you\'re using a testnet account with no real funds.\n\nAre you sure you want to import this wallet?')) {
+                                            onMnemonicSet(mnemonic.trim());
+                                            setMnemonic('');
+                                        }
+                                    }}
+                                    disabled={mnemonic.split(' ').filter(word => word.trim()).length !== 25}
+                                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-colors ${
+                                        mnemonic.split(' ').filter(word => word.trim()).length === 25
+                                            ? 'bg-purple-600 text-white hover:bg-purple-700'
+                                            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                    }`}
+                                >
+                                    Import Wallet
+                                </button>
+                                {userMnemonic && (
+                                    <button
+                                        onClick={() => {
+                                            if (confirm('Switch back to demo wallet? This will use the demo account for transactions.')) {
+                                                onMnemonicSet('');
+                                            }
+                                        }}
+                                        className="px-4 py-2 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 font-semibold transition-colors"
+                                    >
+                                        Use Demo
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Security Notice */}
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-start gap-2">
+                                <div className="text-red-500 text-lg">⚠️</div>
+                                <div>
+                                    <h4 className="text-sm font-semibold text-red-900 mb-1">Security Warning</h4>
+                                    <p className="text-sm text-red-700">
+                                        Importing a real wallet mnemonic transmits sensitive information to the server.
+                                        This implementation is for testing purposes only. Use only with testnet accounts containing no real funds.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button className="w-full text-center p-4 font-saira font-bold text-lg text-red-500 hover:bg-red-500/10 transition-all duration-200 border-t border-gray-200 rounded-b-lg">
@@ -221,7 +325,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ wallet: initialWallet }) => {
 
     return (
         <>
-            {isAccountModalOpen && <AccountAndSettingsModal wallet={wallet} onClose={() => setIsAccountModalOpen(false)} onMnemonicSet={setUserMnemonic} />}
+            {isAccountModalOpen && <AccountAndSettingsModal wallet={wallet} onClose={() => setIsAccountModalOpen(false)} onMnemonicSet={setUserMnemonic} userMnemonic={userMnemonic} />}
             <div className="flex h-screen w-screen bg-white text-black font-mono">
                 
                 <main className="flex-grow flex flex-col h-screen relative">
