@@ -33,7 +33,8 @@ Available tools:
 - send_algo: Send ALGO to an address
 - get_transaction_history: Get transaction history for an address
 
-You can call these tools by name when users request crypto operations.`)
+When users ask for their balance or balance checking, automatically use the demo wallet address configured in the system. For other balance queries, ask for a specific address.
+When users ask to send ALGO, always get explicit confirmation before executing.`)
   .withTools(balanceTool, sendTool, historyTool)
   .withSessionService(new InMemorySessionService(), {})
   .build()
@@ -47,10 +48,10 @@ You can call these tools by name when users request crypto operations.`)
 
 // Export the ask function that uses the runner
 export const ravanAgent = {
-  ask: async (message: string) => {
+  ask: async (message: string, context?: any) => {
     if (!ravanRunner) {
       throw new Error('ADK-TS Agent not yet initialized - please wait for server startup');
     }
-    return await ravanRunner.ask(message);
+    return await ravanRunner.ask(message, context);
   }
 };

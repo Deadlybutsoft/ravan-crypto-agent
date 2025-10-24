@@ -8,6 +8,7 @@ class AlgorandService {
   private algodClient: algosdk.Algodv2;
   private indexerClient: algosdk.Indexer;
   private demoAccount: algosdk.Account | null = null;
+  private userAccount: algosdk.Account | null = null;
 
   constructor() {
     this.algodClient = new algosdk.Algodv2('', config.algorand.apiUrl, '');
@@ -23,6 +24,17 @@ class AlgorandService {
       }
     } else {
       console.log('⚠️  No demo wallet configured - running in read-only mode');
+    }
+  }
+
+  public setUserAccount(mnemonic: string) {
+    try {
+      this.userAccount = algosdk.mnemonicToSecretKey(mnemonic);
+      console.log('✅ User account set successfully');
+    } catch (error) {
+      console.error('Failed to set user account from mnemonic:', error);
+      this.userAccount = null;
+      throw new Error('Invalid mnemonic phrase');
     }
   }
 
@@ -55,11 +67,13 @@ class AlgorandService {
   }
 
   public async sendTransaction(to: string, amount: number, note?: string): Promise<{ txId: string }> {
-    if (!this.demoAccount) {
-      throw new Error('Demo wallet not initialized.');
+    // Use user account if available, otherwise demo account
+    const account = this.userAccount || this.demoAccount;
+    if (!account) {
+      throw new Error('No wallet configured for sending transactions.');
     }
 
-    const from = this.demoAccount.addr;
+    const from = account.addr;
     const suggestedParams = await this.algodClient.getTransactionParams().do();
     const amountInMicroAlgos = Math.floor(amount * 10 ** ALGO_DECIMALS);
 
@@ -71,7 +85,7 @@ class AlgorandService {
       note: note ? new Uint8Array(Buffer.from(note)) : undefined,
     });
 
-    const signedTxn = txn.signTxn(this.demoAccount.sk);
+    const signedTxn = txn.signTxn(account.sk);
     const { txId } = await this.algodClient.sendRawTransaction(signedTxn).do();
     await algosdk.waitForConfirmation(this.algodClient, txId, 4);
 
