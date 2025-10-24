@@ -217,7 +217,7 @@ const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
 
     return (
         <div className={`flex items-start gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}>
-            <div className={`px-4 py-3 rounded-lg max-w-xl whitespace-pre-wrap font-mono ${isUser ? 'bg-purple-200 text-black' : 'bg-gray-200 text-black'}`}>
+            <div className={`px-4 py-3 rounded-lg w-full whitespace-pre-wrap font-mono ${isUser ? 'bg-purple-200 text-black' : 'bg-gray-200 text-black'}`}>
                 <p>{message.text}</p>
             </div>
         </div>
@@ -334,6 +334,31 @@ const ChatPage: React.FC<ChatPageProps> = ({ wallet: initialWallet }) => {
                 
                     <footer className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent">
                         <div className="max-w-3xl mx-auto">
+                            {/* Demo Prompts */}
+                            <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-gray-200">
+                                <div className="text-xs text-gray-600 mb-2 font-semibold">Try these commands:</div>
+                                <div className="flex flex-wrap gap-2 text-xs">
+                                    <button
+                                        onClick={() => setInput('get the total balance of this address GQCGVTCORNYT7TH5AES7FEV7O2YUGC6LYWD4L6LDCXXMGJJHXCUQYAGUVE')}
+                                        className="px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200 rounded-full hover:bg-purple-100 transition-colors"
+                                    >
+                                        Check Balance
+                                    </button>
+                                    <button
+                                        onClick={() => setInput('last 10 transaction history of this address HZ57J3K46JIJXILONBBZOHX6BKPXEM2VVXNRFSUED6DKFD5ZD24PMJ3MVA')}
+                                        className="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-full hover:bg-blue-100 transition-colors"
+                                    >
+                                        Transaction History
+                                    </button>
+                                    <button
+                                        onClick={() => setInput('send 22 ALGO to your-friend-address')}
+                                        className="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full hover:bg-green-100 transition-colors"
+                                    >
+                                        Send ALGO
+                                    </button>
+                                </div>
+                            </div>
+
                             <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(input); }}>
                                 <div className="relative bg-white border border-gray-300 rounded-2xl transition-all duration-300 focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-transparent overflow-hidden">
                                     {attachedFile && (
