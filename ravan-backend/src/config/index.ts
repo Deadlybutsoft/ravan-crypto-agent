@@ -10,7 +10,7 @@ export const config = {
   },
   demoWallet: {
     mnemonic: process.env.DEMO_WALLET_MNEMONIC || '',
-    address: process.env.DEMO_WALLET_ADDRESS || '',
+    address: process.env.DEMO_WALLET_ADDRESS || 'GQCGVTCORNYT7TH5AES7FEV7O2YUGC6LYWD4L6LDCXXMGJJHXCUQYAGUVE',
   },
   google: {
     apiKey: process.env.GOOGLE_API_KEY || '',
