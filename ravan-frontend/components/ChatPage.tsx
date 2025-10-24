@@ -139,7 +139,7 @@ const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => 
                                             alert('Please enter exactly 25 words for a valid mnemonic phrase.');
                                             return;
                                         }
-                                        if (confirm('⚠️ SECURITY WARNING ⚠️\n\nThis will import your wallet mnemonic to send real transactions. Your mnemonic will be transmitted to the server. Only proceed if you\'re using a testnet account with no real funds.\n\nAre you sure you want to import this wallet?')) {
+                                        if (confirm('Import this wallet for transaction signing?\n\nThis will use your imported wallet for sending ALGO instead of the demo wallet.')) {
                                             onMnemonicSet(mnemonic.trim());
                                             setMnemonic('');
                                         }
@@ -168,19 +168,7 @@ const AccountAndSettingsModal: React.FC<{ wallet: Wallet | null, onClose: () => 
                             </div>
                         </div>
 
-                        {/* Security Notice */}
-                        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <div className="flex items-start gap-2">
-                                <div className="text-red-500 text-lg">⚠️</div>
-                                <div>
-                                    <h4 className="text-sm font-semibold text-red-900 mb-1">Security Warning</h4>
-                                    <p className="text-sm text-red-700">
-                                        Importing a real wallet mnemonic transmits sensitive information to the server.
-                                        This implementation is for testing purposes only. Use only with testnet accounts containing no real funds.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
                 <button className="w-full text-center p-4 font-saira font-bold text-lg text-red-500 hover:bg-red-500/10 transition-all duration-200 border-t border-gray-200 rounded-b-lg">
